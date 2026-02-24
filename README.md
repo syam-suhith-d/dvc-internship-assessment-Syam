@@ -1,13 +1,12 @@
 # DVC Web Development Internship Assessment
 
 ## Contact Information
-**Name:** Syam Suhith Dondapati
-**Email:** syamsuhithd@gmail.com
-**Phone:** +91 9347941234
-**LinkedIn:** https://www.linkedin.com/in/syam-suhith-dondapati-/
-**Portfolio:** https://portfolio-one-gray-40.vercel.app/
-**Fake Store Website:** https://fake-store-three-delta.vercel.app/
-
+* **Name:** Syam Suhith Dondapati
+* **Email:** syamsuhithd@gmail.com
+* **Phone:** +91 9347941234
+* **LinkedIn:** https://www.linkedin.com/in/syam-suhith-dondapati-/
+* **Portfolio:** https://portfolio-one-gray-40.vercel.app/
+* **Fake Store Website:** https://fake-store-three-delta.vercel.app/
 
 ---
 
@@ -41,8 +40,3 @@ I created a real-time weather dashboard using Vanilla JavaScript, HTML5, and CSS
 * **WordPress Environment (Q2):** Assumed the plugin will be run on a modern WordPress installation (5.8+) supporting the Gutenberg block editor and running PHP 7.4+.
 
 ---
-
-## Live Demos
-* **Question 1 (Product Card):** 
-* **Question 2 (WordPress Plugin):** 
-* **Question 3 (Weather Dashboard):** 
