@@ -1,10 +1,10 @@
 <?php
 /**
  * Plugin Name: DVC Testimonials Manager
- * Plugin URI: https://yourportfolio.com
+ * Plugin URI: https://portfolio-one-gray-40.vercel.app/ 
  * Description: A complete testimonials management system allowing users to easily add, manage, and display testimonials via a shortcode slider.
  * Version: 1.0.0
- * Author: Your Name
+ * Author: Syam Suhith
  * Text Domain: dvc-testimonials
  */
 
