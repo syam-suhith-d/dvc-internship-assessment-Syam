@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Product Card</title>
+    <style>
+        /* Theme Variables */
+        :root {
+            --color-primary: #0f172a;
+            --color-primary-hover: #334155;
+            --color-accent: #ef4444;
+            --color-success: #10b981;
+            --color-text-main: #1e293b;
+            --color-text-muted: #64748b;
+            --color-bg: #f8fafc;
+            --color-card-bg: #ffffff;
+            --color-border: #cbd5e1;
+            --color-btn-hover: #f1f5f9;
+            --border-radius: 12px;
+            --transition-speed: 0.3s;
+            --shadow-base: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-hover: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            --shadow-top: 0 -4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        body.dark-theme {
+            --color-primary: #3b82f6;
+            --color-primary-hover: #60a5fa;
+            --color-accent: #ef4444;
+            --color-success: #059669;
+            --color-text-main: #f8fafc;
+            --color-text-muted: #94a3b8;
+            --color-bg: #0f172a;
+            --color-card-bg: #1e293b;
+            --color-border: #334155;
+            --color-btn-hover: #334155;
+            --shadow-base: 0 4px 6px -1px rgb(0 0 0 / 0.3);
+            --shadow-hover: 0 20px 25px -5px rgb(0 0 0 / 0.4);
+            --shadow-top: 0 -4px 6px -1px rgb(0 0 0 / 0.3);
+        }
+
+        /* Base & Reset */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: var(--color-bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1.5rem;
+            padding-bottom: 80px; /* Space for the bottom cart */
+            transition: background-color var(--transition-speed) ease;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle-container {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-theme {
+            background: var(--color-card-bg);
+            color: var(--color-text-main);
+            border: 1px solid var(--color-border);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all var(--transition-speed) ease;
+            box-shadow: var(--shadow-base);
+        }
+
+        .btn-theme:hover { background: var(--color-btn-hover); }
+
+        /* Product Card Layout */
+        .product-card {
+            background-color: var(--color-card-bg);
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-base);
+            overflow: hidden;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .product-image-container {
+            width: 100%;
+            height: 250px;
+            background-color: #f1f5f9;
+            overflow: hidden;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .product-info {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .product-title { font-size: 1.25rem; color: var(--color-text-main); font-weight: 700; line-height: 1.2; }
+        .product-description { font-size: 0.95rem; color: var(--color-text-muted); line-height: 1.5; }
+
+        /* Pricing */
+        .price-wrap { display: flex; align-items: center; flex-wrap: wrap; gap: 0.75rem; }
+        .price-current { font-size: 1.5rem; font-weight: 800; color: var(--color-text-main); }
+        .price-original { font-size: 1rem; color: var(--color-text-muted); text-decoration: line-through; }
+        .discount-badge { background-color: var(--color-accent); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+
+        /* Interactive Controls */
+        .controls-wrap { display: flex; flex-direction: column; gap: 1rem; margin-top: 0.5rem; }
+        .quantity-selector { display: inline-flex; align-items: center; border: 1px solid var(--color-border); border-radius: 6px; width: fit-content; overflow: hidden; background: var(--color-card-bg); }
+        .qty-btn { background-color: transparent; border: none; padding: 0.5rem 1rem; font-size: 1.2rem; color: var(--color-text-main); cursor: pointer; transition: background-color 0.2s; }
+        .qty-btn:hover:not(:disabled) { background-color: var(--color-btn-hover); }
+        .qty-btn:disabled { color: var(--color-border); cursor: not-allowed; }
+        
+        .qty-input { width: 3rem; text-align: center; border: none; border-left: 1px solid var(--color-border); border-right: 1px solid var(--color-border); font-weight: 600; font-size: 1rem; color: var(--color-text-main); background: transparent; padding: 0.5rem 0; -moz-appearance: textfield; }
+        .qty-input::-webkit-outer-spin-button, .qty-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+        .btn-add-cart { background-color: var(--color-primary); color: white; border: none; border-radius: 6px; padding: 0.875rem 1.5rem; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color var(--transition-speed) ease; width: 100%; }
+        .btn-add-cart:hover { background-color: var(--color-primary-hover); }
+
+        /* Toast Notifications (Fixed Overlapping Issue) */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .toast {
+            background-color: var(--color-success);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow-base);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateX(120%);
+            animation: slideInRight 0.3s forwards;
+        }
+
+        .toast.fade-out { animation: fadeOutRight 0.3s forwards; }
+
+        @keyframes slideInRight { to { transform: translateX(0); } }
+        @keyframes fadeOutRight { to { opacity: 0; transform: translateX(100%); } }
+
+        /* Floating Bottom Cart */
+        .bottom-cart {
+            position: fixed;
+            bottom: -100px; /* Hidden by default */
+            left: 0;
+            width: 100%;
+            background-color: var(--color-card-bg);
+            border-top: 1px solid var(--color-border);
+            box-shadow: var(--shadow-top);
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 999;
+        }
+
+        .bottom-cart.visible { bottom: 0; }
+
+        .cart-details { display: flex; flex-direction: column; gap: 0.25rem; }
+        .cart-title { color: var(--color-text-main); font-weight: 700; font-size: 1rem; }
+        .cart-subtitle { color: var(--color-text-muted); font-size: 0.85rem; }
+        .cart-total-wrap { text-align: right; }
+        .cart-total-label { color: var(--color-text-muted); font-size: 0.85rem; }
+        .cart-total-price { color: var(--color-text-main); font-size: 1.25rem; font-weight: 800; }
+
+        /* Breakpoints */
+        @media (min-width: 768px) {
+            .product-card { max-width: 600px; flex-direction: row; }
+            .product-image-container { width: 45%; height: auto; min-height: 300px; }
+            .product-info { width: 55%; padding: 2rem; justify-content: center; }
+            .bottom-cart { padding: 1rem 3rem; }
+        }
+
+        @media (min-width: 1024px) {
+            .product-card { max-width: 800px; }
+            .product-image-container { width: 50%; min-height: 350px; }
+            .product-info { width: 50%; padding: 2.5rem; }
+            .controls-wrap { flex-direction: row; align-items: center; }
+            .btn-add-cart { flex: 1; }
+            .product-card:hover { box-shadow: var(--shadow-hover); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="theme-toggle-container">
+        <button id="theme-toggle" class="btn-theme" aria-label="Toggle dark mode">
+            <span id="theme-icon">🌙</span> <span id="theme-text">Dark Mode</span>
+        </button>
+    </div>
+
+    <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+    <article class="product-card">
+        <figure class="product-image-container">
+            <img 
+                src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=800&auto=format&fit=crop" 
+                alt="Premium Wireless Headphones" 
+                class="product-image"
+                onerror="this.onerror=null; this.src='https://placehold.co/600x400?text=Image+Not+Found';"
+            >
+        </figure>
+        
+        <div class="product-info">
+            <header>
+                <h1 class="product-title">Sony WH-1000XM5 Wireless Headphones</h1>
+            </header>
+            
+            <p class="product-description">
+                Industry-leading noise cancellation with two processors and eight microphones for unprecedented listening quality. Features up to 30 hours of battery life.
+            </p>
+            
+            <div class="price-wrap">
+                <span class="price-current" aria-label="Current price: $348.00">$348.00</span>
+                <del class="price-original" aria-label="Original price: $398.00">$398.00</del>
+                <span class="discount-badge">Save $50</span>
+            </div>
+
+            <div class="controls-wrap">
+                <div class="quantity-selector">
+                    <button type="button" class="qty-btn" id="btn-decrease" aria-label="Decrease quantity" disabled>−</button>
+                    <input type="number" id="qty-input" class="qty-input" value="1" min="1" max="10" aria-label="Product quantity" readonly>
+                    <button type="button" class="qty-btn" id="btn-increase" aria-label="Increase quantity">+</button>
+                </div>
+                
+                <button type="button" class="btn-add-cart" id="btn-add-cart">
+                    Add to Cart
+                </button>
+            </div>
+        </div>
+    </article>
+
+    <div class="bottom-cart" id="bottom-cart">
+        <div class="cart-details">
+            <div class="cart-title">🛒 Your Cart</div>
+            <div class="cart-subtitle" id="cart-items-text">0 Items</div>
+        </div>
+        <div class="cart-total-wrap">
+            <div class="cart-total-label">Subtotal</div>
+            <div class="cart-total-price" id="cart-total-price">$0.00</div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Theme Toggle Logic ---
+            const themeToggle = document.getElementById('theme-toggle');
+            const themeIcon = document.getElementById('theme-icon');
+            const themeText = document.getElementById('theme-text');
+            const body = document.body;
+
+            const currentTheme = localStorage.getItem('theme');
+            if (currentTheme === 'dark') {
+                body.classList.add('dark-theme');
+                themeIcon.textContent = '☀️';
+                themeText.textContent = 'Light Mode';
+            }
+
+            themeToggle.addEventListener('click', () => {
+                body.classList.toggle('dark-theme');
+                let theme = 'light';
+                
+                if (body.classList.contains('dark-theme')) {
+                    theme = 'dark';
+                    themeIcon.textContent = '☀️';
+                    themeText.textContent = 'Light Mode';
+                } else {
+                    themeIcon.textContent = '🌙';
+                    themeText.textContent = 'Dark Mode';
+                }
+                localStorage.setItem('theme', theme);
+            });
+
+            // --- Product & Cart State ---
+            const product = {
+                name: "Sony WH-1000XM5 Wireless Headphones",
+                price: 348.00,
+                minQty: 1,
+                maxQty: 10
+            };
+
+            let globalCartQty = 0;
+            let globalCartTotal = 0;
+
+            const btnDecrease = document.getElementById('btn-decrease');
+            const btnIncrease = document.getElementById('btn-increase');
+            const qtyInput = document.getElementById('qty-input');
+            const btnAddCart = document.getElementById('btn-add-cart');
+            
+            const toastContainer = document.getElementById('toast-container');
+            const bottomCart = document.getElementById('bottom-cart');
+            const cartItemsText = document.getElementById('cart-items-text');
+            const cartTotalPrice = document.getElementById('cart-total-price');
+
+            // --- UI Updaters ---
+            const updateButtonStates = (currentQty) => {
+                btnDecrease.disabled = currentQty <= product.minQty;
+                btnIncrease.disabled = currentQty >= product.maxQty;
+            };
+
+            const showToast = (message) => {
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                toast.innerHTML = `<span>✅</span> ${message}`;
+                
+                toastContainer.appendChild(toast);
+
+                setTimeout(() => {
+                    toast.classList.add('fade-out');
+                    toast.addEventListener('animationend', () => toast.remove());
+                }, 3000);
+            };
+
+            const updateBottomCart = (addedQty, addedTotal) => {
+                globalCartQty += addedQty;
+                globalCartTotal += addedTotal;
+
+                cartItemsText.textContent = `${globalCartQty} Item${globalCartQty > 1 ? 's' : ''} (${product.name})`;
+                cartTotalPrice.textContent = `$${globalCartTotal.toFixed(2)}`;
+                
+                // Slide up the cart if it's the first item
+                if (globalCartQty > 0) {
+                    bottomCart.classList.add('visible');
+                }
+            };
+
+            // --- Event Listeners ---
+            btnDecrease.addEventListener('click', () => {
+                let currentQty = parseInt(qtyInput.value, 10);
+                if (currentQty > product.minQty) {
+                    currentQty--;
+                    qtyInput.value = currentQty;
+                    updateButtonStates(currentQty);
+                }
+            });
+
+            btnIncrease.addEventListener('click', () => {
+                let currentQty = parseInt(qtyInput.value, 10);
+                if (currentQty < product.maxQty) {
+                    currentQty++;
+                    qtyInput.value = currentQty;
+                    updateButtonStates(currentQty);
+                }
+            });
+
+            btnAddCart.addEventListener('click', () => {
+                const selectedQty = parseInt(qtyInput.value, 10);
+                const totalPrice = product.price * selectedQty;
+
+                // Log details to console [cite: 30]
+                console.log('--- Cart Update ---');
+                console.log(`Product Name: ${product.name}`);
+                console.log(`Quantity Added: ${selectedQty}`);
+                console.log(`Unit Price: $${product.price.toFixed(2)}`);
+                console.log(`Total Price: $${totalPrice.toFixed(2)}`);
+                console.log('-------------------');
+
+                // Trigger UI updates [cite: 22, 29]
+                showToast(`Added ${selectedQty} item(s) to cart!`);
+                updateBottomCart(selectedQty, totalPrice);
+                
+                // Optional: reset quantity selector back to 1 after adding
+                qtyInput.value = 1;
+                updateButtonStates(1);
+            });
+        });
+    </script>
+</body>
+</html>
